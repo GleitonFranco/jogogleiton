@@ -30,6 +30,10 @@ public class JogoGleiton extends Game.Default {
 		x = graphics().width() / 2;
 	    y = graphics().height() / 2;
 	    ay = GRAVITY;
+	    
+	    Image img = assets().getImage("images/rat-icon.png");
+	    layer = graphics().createImageLayer(img);
+	    graphics().rootLayer().add(layer);
 	}
 
 	@Override
@@ -43,16 +47,26 @@ public class JogoGleiton extends Game.Default {
 	    vx += ax * delta;
 	    vy += ay * delta;
 	    x += vx * delta;
-	    y += vy * delta;
+	    y += 1;//vy * delta;
 	}
 
 	@Override
 	public void paint(float alpha) {
 		// the background automatically paints itself, so no need to do anything here!
+		// Interpolate current position.
+	    float x = (this.x * alpha) + (px * (1f - alpha));
+	    float y = (this.y * alpha) + (py * (1f - alpha));
+
+	    // Update the layer.
+	    layer.transform();
+	    layer.setTranslation(
+	      x - layer.image().width() / 2,
+	      y - layer.image().height() / 2
+	    );
 	}
 	
 	public int updateRate() {
 	    // Request that update() run at 20 fps.
-	    return 50;
+	    return 0;
 	  }
 }
