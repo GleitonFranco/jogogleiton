@@ -2,10 +2,11 @@ package br.com.drestranho.jogogleiton.core;
 
 public class Missil extends ObjTela {
 	
-	public final int VELOCIDADE = 2;
+	public final float VELOCIDADE = 2;
 	
-	public Missil(int x, int y, String iPath) {
+	public Missil(float x, float y, String iPath) {
 		super(x, y, iPath);
+		setX(getX()-largura/2);
 		
 	}
 

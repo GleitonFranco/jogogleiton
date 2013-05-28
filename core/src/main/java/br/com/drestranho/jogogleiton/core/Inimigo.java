@@ -5,7 +5,7 @@ public class Inimigo extends ObjTela {
 	public boolean isVisible;
 	public final int VELOCIDADE = 1;
 	
-	public Inimigo(int x, int y, String iPath) {
+	public Inimigo(float x, float y, String iPath) {
 		super(x, y, iPath);
 		isVisible = true;
 	}
@@ -15,7 +15,7 @@ public class Inimigo extends ObjTela {
 		setX(getX()-VELOCIDADE);
 		if (getX() < Util.X_MIN) {
 			setX(Util.X_MAX);
-			setX(getX()+10);
+			setY(getY()+30);
 		}
 	}
 

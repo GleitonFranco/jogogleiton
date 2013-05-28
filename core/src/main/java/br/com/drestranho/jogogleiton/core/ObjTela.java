@@ -15,7 +15,7 @@ public class ObjTela {
 	ImageLayer layer;
 	public boolean isVisible;
 	
-	public ObjTela(int x, int y, String iPath) {
+	public ObjTela(float x, float y, String iPath) {
 		this.x = x;
 		this.y = y;
 		dx = 0;
@@ -24,7 +24,7 @@ public class ObjTela {
 		layer = graphics().createImageLayer(imagem);
 		graphics().rootLayer().add(layer);
 		altura = layer.height();
-		largura = layer.width();
+		largura = imagem.width();
 		isVisible = true;
 	}
 	
