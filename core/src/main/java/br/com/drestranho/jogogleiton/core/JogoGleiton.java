@@ -42,8 +42,11 @@ public class JogoGleiton extends Game.Default {
 		ax = GRAVITY;
 
 		canhoes = new ArrayList<Canhao>();
-		canhoes.add(new Canhao(Util.CANHAO_2,Util.Y_CANHAO, "images/canhao.png"));//51x61
-		canhoes.get(0).atirar();
+		float distancia = (float) (Util.X_MAX/(Util.N_CANHAO+1));
+		for ( int i=0; i< Util.N_CANHAO ; i++) {
+			canhoes.add(new Canhao((i+1)*distancia,Util.Y_CANHAO, "images/canhao.png"));//51x61
+		}
+		
 
 		inimigos = new ArrayList<Inimigo>();
 		adicionaInimigo();
@@ -59,7 +62,7 @@ public class JogoGleiton extends Game.Default {
 				//	    	    misseisLayer.add(tiro);
 				for (Canhao c : canhoes )
 					if (c.getBounds().contains(event.x(), event.y()))
-						canhoes.get(0).atirar();
+						c.atirar();
 			}
 		});
 
