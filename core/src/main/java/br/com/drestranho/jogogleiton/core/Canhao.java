@@ -20,8 +20,8 @@ public class Canhao extends ObjTela {
 	}
 	
 	public void atirar() {
-		misseis.add(new Missil(getX()+largura/2,Util.Y_MISSIL,"images/missil.png"));
-		System.out.println(largura);
+		misseis.add(new Missil(getX()+35/2,Util.Y_MISSIL,"images/missil.png"));//15x35 +getLayer().width()/2
+		System.out.println(getLayer().width());
 	}
 	
 }

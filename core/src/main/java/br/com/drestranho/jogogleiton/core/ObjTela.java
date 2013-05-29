@@ -23,7 +23,7 @@ public class ObjTela {
 		Image imagem = assets().getImage(iPath);
 		layer = graphics().createImageLayer(imagem);
 		graphics().rootLayer().add(layer);
-		altura = layer.height();
+		altura = imagem.height();
 		largura = imagem.width();
 		isVisible = true;
 	}
@@ -63,7 +63,7 @@ public class ObjTela {
 	}
 	
 	public Rectangle getBounds() {
-		return new Rectangle(getX(), getY(), largura, altura);
+		return new Rectangle(getX(), getY(), layer.image().width(), layer.image().height());
 	}
 
 	public float getX() {

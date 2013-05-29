@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import playn.core.Game;
+import playn.core.GroupLayer;
 import playn.core.Image;
 import playn.core.ImageLayer;
+import playn.core.Pointer;
 
 public class JogoGleiton extends Game.Default {
 	static final float GRAVITY = 64;
@@ -16,12 +18,14 @@ public class JogoGleiton extends Game.Default {
 	Image inimigo2;
 	List<Inimigo> inimigos;
 	List<Canhao> canhoes; 
+	//	GroupLayer misseisLayer;
+	Pointer.Adapter pointer;
 
 	float px, py;
 	float x, y;
 	float vx, vy;
 	float ax, ay;
-		
+
 	public JogoGleiton() {
 		super(33); // call update every 33ms (30 times per second)
 	}
@@ -32,91 +36,105 @@ public class JogoGleiton extends Game.Default {
 		Image bgImage = assets().getImage("images/fundo.png");
 		ImageLayer bgLayer = graphics().createImageLayer(bgImage);
 		graphics().rootLayer().add(bgLayer);
-		
+
 		x = graphics().width() / 2;
-	    y = graphics().height() / 2;
-	    ax = GRAVITY;
-	    
-	    canhoes = new ArrayList<Canhao>();
-	    canhoes.add(new Canhao(Util.CANHAO_2,Util.Y_CANHAO, "images/canhao.png"));
-	    canhoes.get(0).atirar();
-	    
-//	    inimigo2 = assets().getImage("images/inimigo_2.gif");
-//	    layer = graphics().createImageLayer(inimigo2);
-//	    graphics().rootLayer().add(layer);
-	    inimigos = new ArrayList<Inimigo>();
-	    adicionaInimigo();
-	    
-	    
-	    
+		y = graphics().height() / 2;
+		ax = GRAVITY;
+
+		canhoes = new ArrayList<Canhao>();
+		canhoes.add(new Canhao(Util.CANHAO_2,Util.Y_CANHAO, "images/canhao.png"));//51x61
+		canhoes.get(0).atirar();
+
+		inimigos = new ArrayList<Inimigo>();
+		adicionaInimigo();
+
+		//	    misseisLayer = graphics().createGroupLayer();
+		//	    graphics().rootLayer().add(misseisLayer);
+
+		pointer().setListener(new Pointer.Adapter() {
+			@Override
+			public void onPointerEnd(Pointer.Event event) {
+				//	    	    ImageLayer tiro = graphics().createImageLayer(assets().getImage("images/missil.png"));
+				//	    	    tiro.setTranslation(event.x(), event.y());
+				//	    	    misseisLayer.add(tiro);
+				for (Canhao c : canhoes )
+					if (c.getBounds().contains(event.x(), event.y()))
+						canhoes.get(0).atirar();
+			}
+		});
+
 	}
 
 	private void adicionaInimigo() {
-		inimigos.add(new Inimigo(20f,20f,"images/inimigo_2.gif"));
+		inimigos.add(new Inimigo(Util.X_MAX,20f,"images/inimigo_2.gif"));//22x16
 	}
 
 	@Override
 	public void update(int delta) {
 		// Save previous position for interpolation.
-	    px = x;
-	    py = y;
-	    
-	    for (Canhao c : canhoes) {
-	    	c.mover();
-	    }
-	    
-	    for (Inimigo i : inimigos) {
-	    	i.mover();
-	    }
+		px = x;
+		py = y;
 
-	    // Update physics.
-//	    delta /= 1000;
-//	    vx += ax * delta;
-//	    vy += ay * delta;
-//	    x += 1;//vx * delta;
-//	    y += vy * delta;
+		if (inimigos.get(inimigos.size()-1).getX()==Util.X_MAX-70) {
+			adicionaInimigo();
+		}
+
+		for (Canhao c : canhoes) {
+			c.mover();
+		}
+
+		for (Inimigo i : inimigos) {
+			i.mover();
+		}
+
+		// Update physics.
+		//	    delta /= 1000;
+		//	    vx += ax * delta;
+		//	    vy += ay * delta;
+		//	    x += 1;//vx * delta;
+		//	    y += vy * delta;
 	}
 
 	@Override
 	public void paint(float alpha) {
 		// the background automatically paints itself, so no need to do anything here!
 		// Interpolate current position.
-//	    float x = (this.x * alpha) + (px * (1f - alpha));
-//	    float y = (this.y * alpha) + (py * (1f - alpha));
+		//	    float x = (this.x * alpha) + (px * (1f - alpha));
+		//	    float y = (this.y * alpha) + (py * (1f - alpha));
 
-	    // Update the layer.
-		
+		// Update the layer.
+
 		for (Canhao c : canhoes) {
 			c.getLayer().transform();
-	    	c.getLayer().setTranslation(
-	    		      c.getX(),
-	    		      c.getY()
-	    			);
-	    	for (Missil m : c.misseis) {
-	    		m.getLayer().transform();
-		    	m.getLayer().setTranslation(
-		    		      m.getX(),
-		    		      m.getY()
-		    			);
-	    	}
-	    }
-		
-	    for (Inimigo i : inimigos) {
-	    	i.getLayer().transform();
-	    	i.getLayer().setTranslation(
-	    		      i.getX(),
-	    		      i.getY()
-	    			);
-	    }
-//	    layer.transform();	    
-//	    layer.setTranslation(
-//	      x - layer.image().width() / 2,
-//	      y - layer.image().height() / 2
-//	    );
+			c.getLayer().setTranslation(
+					c.getX(),
+					c.getY()
+					);
+			for (Missil m : c.misseis) {
+				m.getLayer().transform();
+				m.getLayer().setTranslation(
+						m.getX(),
+						m.getY()
+						);
+			}
+		}
+
+		for (Inimigo i : inimigos) {
+			i.getLayer().transform();
+			i.getLayer().setTranslation(
+					i.getX(),
+					i.getY()
+					);
+		}
+		//	    layer.transform();	    
+		//	    layer.setTranslation(
+		//	      x - layer.image().width() / 2,
+		//	      y - layer.image().height() / 2
+		//	    );
 	}
-	
+
 	public int updateRate() {
-	    // Request that update() run at 20 fps.
-	    return 0;
-	  }
+		// Request that update() run at 20 fps.
+		return 0;
+	}
 }
