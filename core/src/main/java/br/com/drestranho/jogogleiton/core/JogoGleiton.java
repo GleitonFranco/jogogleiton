@@ -77,8 +77,10 @@ public class JogoGleiton extends Game.Default {
 		// Save previous position for interpolation.
 		px = x;
 		py = y;
+		
+		checarColisoes();
 
-		if (inimigos.get(inimigos.size()-1).getX()==Util.X_MAX-70) {
+		if (inimigos.size()>0) if (inimigos.get(inimigos.size()-1).getX()==Util.X_MAX-70) {
 			adicionaInimigo();
 		}
 
@@ -97,6 +99,33 @@ public class JogoGleiton extends Game.Default {
 		//	    x += 1;//vx * delta;
 		//	    y += vy * delta;
 	}
+	
+	public void checarColisoes() {
+		for (Canhao c : canhoes) {
+			for (Missil m : c.getMisseis()) {
+				for (Inimigo i : inimigos) {
+					if (i.getBounds().intersects(m.getBounds())) {
+						i.isVisible=false;
+						m.isVisible=false;
+//						c.getMisseis().remove(m);
+//						inimigos.remove(i);
+					}
+				}
+				if (m.getY()<=0) {
+					m.isVisible=false;
+//					c.getMisseis().remove(m);
+				}
+			}
+		}
+		for (int i=0;i<inimigos.size()-1;i++) {//if (inimigos.size()>0) 
+//			System.out.println("----------missil");
+			if (!inimigos.get(i).isVisible) {
+				graphics().rootLayer().remove(inimigos.get(i).getLayer());
+				inimigos.remove(i);
+			}
+		}
+		
+	}
 
 	@Override
 	public void paint(float alpha) {
@@ -109,16 +138,10 @@ public class JogoGleiton extends Game.Default {
 
 		for (Canhao c : canhoes) {
 			c.getLayer().transform();
-			c.getLayer().setTranslation(
-					c.getX(),
-					c.getY()
-					);
+			c.getLayer().setTranslation(c.getX(),c.getY());
 			for (Missil m : c.misseis) {
 				m.getLayer().transform();
-				m.getLayer().setTranslation(
-						m.getX(),
-						m.getY()
-						);
+				m.getLayer().setTranslation(m.getX(),m.getY());					
 			}
 		}
 
