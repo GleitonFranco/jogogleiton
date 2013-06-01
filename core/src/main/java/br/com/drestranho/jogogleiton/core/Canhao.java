@@ -3,6 +3,8 @@ package br.com.drestranho.jogogleiton.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import pythagoras.f.Rectangle;
+
 public class Canhao extends ObjTela {
 
 	public List<Missil> misseis;
@@ -20,7 +22,7 @@ public class Canhao extends ObjTela {
 	}
 	
 	public void atirar() {
-		misseis.add(new Missil(getX()+35/2,Util.Y_MISSIL,"images/missil.png"));//15x35 +getLayer().width()/2
+		misseis.add(new Missil(getX()+Util.LARGURA_CANHAO/2-Util.LARGURA_MISSIL/2,Util.Y_MISSIL,Util.SRC_MISSIL));//15x35 +getLayer().width()/2
 	}
 
 	public List<Missil> getMisseis() {
@@ -29,6 +31,16 @@ public class Canhao extends ObjTela {
 
 	public void setMisseis(List<Missil> misseis) {
 		this.misseis = misseis;
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return new Rectangle(
+				super.getBounds().x()-(Util.MARGEM_CANHAO)
+				,super.getBounds().y()
+				,super.getBounds().width()+(Util.MARGEM_CANHAO*2)
+				,super.getBounds().height()+(Util.MARGEM_CANHAO)
+				);
 	}
 	
 	

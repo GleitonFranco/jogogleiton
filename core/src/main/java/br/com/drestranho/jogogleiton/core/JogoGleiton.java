@@ -5,21 +5,28 @@ import static playn.core.PlayN.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import playn.core.CanvasImage;
 import playn.core.Game;
 import playn.core.GroupLayer;
 import playn.core.Image;
 import playn.core.ImageLayer;
 import playn.core.Pointer;
+import playn.core.Sound;
+import pythagoras.f.Rectangle;
 
 public class JogoGleiton extends Game.Default {
 	static final float GRAVITY = 64;
 
 	ImageLayer layer;
+	CanvasImage pontosImagem;
+	ImageLayer pontosLayer;
+	int pontos;
 	Image inimigo2;
 	List<Inimigo> inimigos;
 	List<Canhao> canhoes; 
 	//	GroupLayer misseisLayer;
 	Pointer.Adapter pointer;
+	Sound tiro;
 
 	float px, py;
 	float x, y;
@@ -33,18 +40,31 @@ public class JogoGleiton extends Game.Default {
 	@Override
 	public void init() {
 		// create and add background image layer
-		Image bgImage = assets().getImage("images/fundo.png");
+		Image bgImage = assets().getImage("images/fundo2.png");
 		ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+//		bgLayer.setScale(Util.Y_MAX, Util.X_MAX);
 		graphics().rootLayer().add(bgLayer);
+		
+		Image soloImage = assets().getImage("images/solo.png");
+		for (int i=0; i<Util.X_MAX; i+=17) {
+			ImageLayer soloLayer = graphics().createImageLayer(soloImage);
+			graphics().rootLayer().add(soloLayer);
+			soloLayer.transform();
+			soloLayer.setTranslation(i,Util.Y_MAX+25);
+		}
 
 		x = graphics().width() / 2;
 		y = graphics().height() / 2;
 		ax = GRAVITY;
+		
+		initPontos();
+		
+		tiro = assets().getSound("images/tiro");
 
 		canhoes = new ArrayList<Canhao>();
 		float distancia = (float) (Util.X_MAX/(Util.N_CANHAO+1));
 		for ( int i=0; i< Util.N_CANHAO ; i++) {
-			canhoes.add(new Canhao((i+1)*distancia,Util.Y_CANHAO, "images/canhao.png"));//51x61
+			canhoes.add(new Canhao((i+1)*distancia,Util.Y_CANHAO, Util.SRC_CANHAO));//51x61
 		}
 		
 
@@ -61,11 +81,21 @@ public class JogoGleiton extends Game.Default {
 				//	    	    tiro.setTranslation(event.x(), event.y());
 				//	    	    misseisLayer.add(tiro);
 				for (Canhao c : canhoes )
-					if (c.getBounds().contains(event.x(), event.y()))
+					if (c.getBounds().contains(event.x(),event.y())) {
 						c.atirar();
+						tiro.play();
+					}
 			}
 		});
 
+	}
+	
+	void initPontos() {
+		pontos=0;
+		pontosImagem = graphics().createImage(640, 50);
+		pontosLayer = graphics().createImageLayer(pontosImagem);
+		pontosLayer.setScale(3f);
+		graphics().rootLayer().add(pontosLayer);
 	}
 
 	private void adicionaInimigo() {
@@ -92,12 +122,6 @@ public class JogoGleiton extends Game.Default {
 			i.mover();
 		}
 
-		// Update physics.
-		//	    delta /= 1000;
-		//	    vx += ax * delta;
-		//	    vy += ay * delta;
-		//	    x += 1;//vx * delta;
-		//	    y += vy * delta;
 	}
 	
 	public void checarColisoes() {
@@ -107,20 +131,18 @@ public class JogoGleiton extends Game.Default {
 					if (i.getBounds().intersects(m.getBounds())) {
 						i.isVisible=false;
 						m.isVisible=false;
-//						c.getMisseis().remove(m);
-//						inimigos.remove(i);
+						pontos++;
 					}
 				}
 				if (m.getY()<=0) {
 					m.isVisible=false;
-//					c.getMisseis().remove(m);
 				}
 			}
 		}
-		for (int i=0;i<inimigos.size()-1;i++) {//if (inimigos.size()>0) 
-//			System.out.println("----------missil");
+		for (int i=0;i<inimigos.size()-1;i++) { 
 			if (!inimigos.get(i).isVisible) {
 				graphics().rootLayer().remove(inimigos.get(i).getLayer());
+				
 				inimigos.remove(i);
 			}
 		}
@@ -134,6 +156,13 @@ public class JogoGleiton extends Game.Default {
 		//	    float x = (this.x * alpha) + (px * (1f - alpha));
 		//	    float y = (this.y * alpha) + (py * (1f - alpha));
 
+		
+		// Pontuacao
+		String s = Integer.toString(pontos);
+		pontosImagem.canvas().clear();
+		pontosImagem.canvas().setFillColor(0xff00ffff);
+		pontosImagem.canvas().drawText(s, 10f, 20f);
+		
 		// Update the layer.
 
 		for (Canhao c : canhoes) {
@@ -147,16 +176,8 @@ public class JogoGleiton extends Game.Default {
 
 		for (Inimigo i : inimigos) {
 			i.getLayer().transform();
-			i.getLayer().setTranslation(
-					i.getX(),
-					i.getY()
-					);
+			i.getLayer().setTranslation(i.getX(),i.getY());
 		}
-		//	    layer.transform();	    
-		//	    layer.setTranslation(
-		//	      x - layer.image().width() / 2,
-		//	      y - layer.image().height() / 2
-		//	    );
 	}
 
 	public int updateRate() {

@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 
 import playn.core.Image;
 import playn.core.ImageLayer;
-//import java.awt.Rectangle;
+import playn.core.Sound;
 import pythagoras.f.Rectangle;
 
 public class ObjTela {
@@ -21,6 +21,7 @@ public class ObjTela {
 		dx = 0;
 		dy = 0;
 		Image imagem = assets().getImage(iPath);
+		
 		layer = graphics().createImageLayer(imagem);
 		graphics().rootLayer().add(layer);
 		altura = imagem.height();
