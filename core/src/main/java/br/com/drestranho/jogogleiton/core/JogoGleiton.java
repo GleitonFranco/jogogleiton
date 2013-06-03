@@ -40,7 +40,7 @@ public class JogoGleiton extends Game.Default {
 	@Override
 	public void init() {
 		// create and add background image layer
-		Image bgImage = assets().getImage("images/fundo2.png");
+		Image bgImage = assets().getImage(Util.SRC_FUNDO);
 		ImageLayer bgLayer = graphics().createImageLayer(bgImage);
 //		bgLayer.setScale(Util.Y_MAX, Util.X_MAX);
 		graphics().rootLayer().add(bgLayer);
@@ -50,7 +50,7 @@ public class JogoGleiton extends Game.Default {
 			ImageLayer soloLayer = graphics().createImageLayer(soloImage);
 			graphics().rootLayer().add(soloLayer);
 			soloLayer.transform();
-			soloLayer.setTranslation(i,Util.Y_MAX+25);
+			soloLayer.setTranslation(i,Util.Y_MAX);
 		}
 
 		x = graphics().width() / 2;
@@ -142,8 +142,15 @@ public class JogoGleiton extends Game.Default {
 		for (int i=0;i<inimigos.size()-1;i++) { 
 			if (!inimigos.get(i).isVisible) {
 				graphics().rootLayer().remove(inimigos.get(i).getLayer());
-				
 				inimigos.remove(i);
+			}
+		}
+		for (Canhao c : canhoes) {
+			for (int i=0;i<c.getMisseis().size()-1;i++) {
+				if (!c.getMisseis().get(i).isVisible) {
+					graphics().rootLayer().remove(c.getMisseis().get(i).getLayer());
+					c.getMisseis().remove(i);
+				}
 			}
 		}
 		
