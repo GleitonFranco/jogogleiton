@@ -2,12 +2,8 @@ package br.com.drestranho.jogogleiton.core;
 
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
-
-import java.awt.event.KeyEvent;
-
 import playn.core.Image;
 import playn.core.ImageLayer;
-import playn.core.Sound;
 import pythagoras.f.Rectangle;
 
 public class ObjTela {
@@ -37,23 +33,6 @@ public class ObjTela {
 		this.layer = layer;
 	}
 
-	public void keyPressed(KeyEvent tecla) {
-		int codigo = tecla.getKeyCode();
-		if (codigo == KeyEvent.VK_UP) dy=-1;
-		if (codigo == KeyEvent.VK_DOWN) dy=+1;
-		if (codigo == KeyEvent.VK_LEFT) dx=-1;
-		if (codigo == KeyEvent.VK_RIGHT) dx=+1;
-		
-	}
-	
-	public void keyReleased(KeyEvent tecla) {
-		int codigo = tecla.getKeyCode();
-		if (codigo == KeyEvent.VK_UP) dy=0;
-		if (codigo == KeyEvent.VK_DOWN) dy=0;
-		if (codigo == KeyEvent.VK_LEFT) dx=0;
-		if (codigo == KeyEvent.VK_RIGHT) dx=0;
-	}
-	
 	public void mover() {
 		x+=dx;
 		y+=dy;
