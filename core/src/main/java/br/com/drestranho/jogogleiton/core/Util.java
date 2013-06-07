@@ -1,9 +1,10 @@
 package br.com.drestranho.jogogleiton.core;
 
 public class Util {
-	// Antes de compilar escolher a plataforma:
-	// mvn -Pandroid install ----> ANDROID=true
-	// mvn test              ----> ANDROID=false
+	// Antes de compilar setar a var ANDROID de acordo
+	// mvn -Pandroid install          ----> ANDROID=true
+	// mvn test                       ----> ANDROID=false
+	// mvn -Phtml integration-test    ----> ANDROID=false
 	public static final boolean ANDROID=false;
 	public static final float X_MAX=ANDROID?320:650;
 	public static final float X_MIN=0;
