@@ -24,7 +24,7 @@ public class JogoGleiton extends Game.Default {
 	Image inimigo2;
 	List<Inimigo> inimigos;
 	List<Canhao> canhoes; 
-	//	GroupLayer misseisLayer;
+	GroupLayer jogoLayer;
 	Pointer.Adapter pointer;
 	Sound tiro;
 
@@ -39,16 +39,18 @@ public class JogoGleiton extends Game.Default {
 
 	@Override
 	public void init() {
+		
+		jogoLayer = graphics().createGroupLayer();
 		// create and add background image layer
 		Image bgImage = assets().getImage(Util.SRC_FUNDO);
 		ImageLayer bgLayer = graphics().createImageLayer(bgImage);
 //		bgLayer.setScale(Util.Y_MAX, Util.X_MAX);
-		graphics().rootLayer().add(bgLayer);
+		jogoLayer.add(bgLayer);
 		
 		Image soloImage = assets().getImage("images/solo.png");
 		for (int i=0; i<Util.X_MAX; i+=17) {
 			ImageLayer soloLayer = graphics().createImageLayer(soloImage);
-			graphics().rootLayer().add(soloLayer);
+			jogoLayer.add(soloLayer);
 			soloLayer.transform();
 			soloLayer.setTranslation(i,Util.Y_MAX);
 		}
@@ -64,7 +66,7 @@ public class JogoGleiton extends Game.Default {
 		canhoes = new ArrayList<Canhao>();
 		float distancia = (float) (Util.X_MAX/(Util.N_CANHAO+1));
 		for ( int i=0; i< Util.N_CANHAO ; i++) {
-			canhoes.add(new Canhao((i+1)*distancia,Util.Y_CANHAO, Util.SRC_CANHAO));//51x61
+			canhoes.add(new Canhao((i+1)*distancia,Util.Y_CANHAO, Util.SRC_CANHAO, jogoLayer));//51x61
 		}
 		
 
@@ -95,11 +97,11 @@ public class JogoGleiton extends Game.Default {
 		pontosImagem = graphics().createImage(640, 50);
 		pontosLayer = graphics().createImageLayer(pontosImagem);
 		pontosLayer.setScale(3f);
-		graphics().rootLayer().add(pontosLayer);
+		jogoLayer.add(pontosLayer);
 	}
 
 	private void adicionaInimigo() {
-		inimigos.add(new Inimigo(Util.X_MAX,20f,"images/inimigo_2.gif"));//22x16
+		inimigos.add(new Inimigo(Util.X_MAX,20f,"images/inimigo_2.gif", jogoLayer));//22x16
 	}
 
 	@Override
@@ -141,14 +143,14 @@ public class JogoGleiton extends Game.Default {
 		}
 		for (int i=0;i<inimigos.size()-1;i++) { 
 			if (!inimigos.get(i).isVisible) {
-				graphics().rootLayer().remove(inimigos.get(i).getLayer());
+				jogoLayer.remove(inimigos.get(i).getLayer());
 				inimigos.remove(i);
 			}
 		}
 		for (Canhao c : canhoes) {
 			for (int i=0;i<c.getMisseis().size()-1;i++) {
 				if (!c.getMisseis().get(i).isVisible) {
-					graphics().rootLayer().remove(c.getMisseis().get(i).getLayer());
+					jogoLayer.remove(c.getMisseis().get(i).getLayer());
 					c.getMisseis().remove(i);
 				}
 			}
@@ -163,6 +165,7 @@ public class JogoGleiton extends Game.Default {
 		//	    float x = (this.x * alpha) + (px * (1f - alpha));
 		//	    float y = (this.y * alpha) + (py * (1f - alpha));
 
+		graphics().rootLayer().add(jogoLayer);
 		
 		// Pontuacao
 		String s = Integer.toString(pontos);

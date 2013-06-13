@@ -2,6 +2,7 @@ package br.com.drestranho.jogogleiton.core;
 
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
+import playn.core.GroupLayer;
 import playn.core.Image;
 import playn.core.ImageLayer;
 import pythagoras.f.Rectangle;
@@ -11,7 +12,7 @@ public class ObjTela {
 	ImageLayer layer;
 	public boolean isVisible;
 	
-	public ObjTela(float x, float y, String iPath) {
+	public ObjTela(float x, float y, String iPath, GroupLayer grLayer) {
 		this.x = x;
 		this.y = y;
 		dx = 0;
@@ -19,7 +20,7 @@ public class ObjTela {
 		Image imagem = assets().getImage(iPath);
 		
 		layer = graphics().createImageLayer(imagem);
-		graphics().rootLayer().add(layer);
+		grLayer.add(layer);
 		altura = imagem.height();
 		largura = imagem.width();
 		isVisible = true;

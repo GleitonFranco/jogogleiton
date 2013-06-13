@@ -3,15 +3,18 @@ package br.com.drestranho.jogogleiton.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import playn.core.GroupLayer;
 import pythagoras.f.Rectangle;
 
 public class Canhao extends ObjTela {
 
 	public List<Missil> misseis;
+	GroupLayer grLayer;
 	
-	public Canhao(float x, float y, String iPath) {
-		super(x, y, iPath);
+	public Canhao(float x, float y, String iPath, GroupLayer grLayer) {
+		super(x, y, iPath, grLayer);
 		misseis = new ArrayList<Missil>();
+		this.grLayer= grLayer; 
 	}
 	
 	@Override
@@ -22,7 +25,7 @@ public class Canhao extends ObjTela {
 	}
 	
 	public void atirar() {
-		misseis.add(new Missil(getX()+Util.LARGURA_CANHAO/2-Util.LARGURA_MISSIL/2,Util.Y_MISSIL,Util.SRC_MISSIL));//15x35 +getLayer().width()/2
+		misseis.add(new Missil(getX()+Util.LARGURA_CANHAO/2-Util.LARGURA_MISSIL/2,Util.Y_MISSIL,Util.SRC_MISSIL, grLayer));
 	}
 
 	public List<Missil> getMisseis() {
