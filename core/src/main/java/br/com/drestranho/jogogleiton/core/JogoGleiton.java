@@ -25,6 +25,7 @@ public class JogoGleiton extends Game.Default {
 	List<Inimigo> inimigos;
 	List<Canhao> canhoes; 
 	GroupLayer jogoLayer;
+	GroupLayer splashLayer;
 	Pointer.Adapter pointer;
 	Sound tiro;
 
@@ -32,6 +33,7 @@ public class JogoGleiton extends Game.Default {
 	float x, y;
 	float vx, vy;
 	float ax, ay;
+	int fase=0;
 
 	public JogoGleiton() {
 		super(33); // call update every 33ms (30 times per second)
@@ -40,8 +42,12 @@ public class JogoGleiton extends Game.Default {
 	@Override
 	public void init() {
 		
+		splashLayer = graphics().createGroupLayer();
+		Image bgSplashImage = assets().getImage(Util.SRC_SPLASH);
+		ImageLayer bgSplashLayer = graphics().createImageLayer(bgSplashImage);
+		splashLayer.add(bgSplashLayer);
+		
 		jogoLayer = graphics().createGroupLayer();
-		// create and add background image layer
 		Image bgImage = assets().getImage(Util.SRC_FUNDO);
 		ImageLayer bgLayer = graphics().createImageLayer(bgImage);
 //		bgLayer.setScale(Util.Y_MAX, Util.X_MAX);
@@ -73,20 +79,19 @@ public class JogoGleiton extends Game.Default {
 		inimigos = new ArrayList<Inimigo>();
 		adicionaInimigo();
 
-		//	    misseisLayer = graphics().createGroupLayer();
-		//	    graphics().rootLayer().add(misseisLayer);
-
 		pointer().setListener(new Pointer.Adapter() {
 			@Override
 			public void onPointerEnd(Pointer.Event event) {
-				//	    	    ImageLayer tiro = graphics().createImageLayer(assets().getImage("images/missil.png"));
-				//	    	    tiro.setTranslation(event.x(), event.y());
-				//	    	    misseisLayer.add(tiro);
-				for (Canhao c : canhoes )
-					if (c.getBounds().contains(event.x(),event.y())) {
-						c.atirar();
-						tiro.play();
+				if (fase==0) {
+					fase++;
+				} else if (fase==1) {
+					for (Canhao c : canhoes ) {
+						if (c.getBounds().contains(event.x(),event.y())) {
+							c.atirar();
+							tiro.play();
+						}
 					}
+				}
 			}
 		});
 
@@ -164,29 +169,35 @@ public class JogoGleiton extends Game.Default {
 		// Interpolate current position.
 		//	    float x = (this.x * alpha) + (px * (1f - alpha));
 		//	    float y = (this.y * alpha) + (py * (1f - alpha));
-
+		graphics().rootLayer().add(splashLayer);
 		graphics().rootLayer().add(jogoLayer);
-		
-		// Pontuacao
-		String s = Integer.toString(pontos);
-		pontosImagem.canvas().clear();
-		pontosImagem.canvas().setFillColor(0xff00ffff);
-		pontosImagem.canvas().drawText(s, 10f, 20f);
-		
-		// Update the layer.
-
-		for (Canhao c : canhoes) {
-			c.getLayer().transform();
-			c.getLayer().setTranslation(c.getX(),c.getY());
-			for (Missil m : c.misseis) {
-				m.getLayer().transform();
-				m.getLayer().setTranslation(m.getX(),m.getY());					
+		if (fase==0) {
+			splashLayer.setVisible(true);
+			jogoLayer.setVisible(false);
+		} else if (fase==1) {
+			splashLayer.setVisible(false);
+			jogoLayer.setVisible(true);
+			// Pontuacao
+			String s = Integer.toString(pontos);
+			pontosImagem.canvas().clear();
+			pontosImagem.canvas().setFillColor(0xff00ffff);
+			pontosImagem.canvas().drawText(s, 10f, 20f);
+			
+			// Update the layer.
+	
+			for (Canhao c : canhoes) {
+				c.getLayer().transform();
+				c.getLayer().setTranslation(c.getX(),c.getY());
+				for (Missil m : c.misseis) {
+					m.getLayer().transform();
+					m.getLayer().setTranslation(m.getX(),m.getY());					
+				}
 			}
-		}
-
-		for (Inimigo i : inimigos) {
-			i.getLayer().transform();
-			i.getLayer().setTranslation(i.getX(),i.getY());
+	
+			for (Inimigo i : inimigos) {
+				i.getLayer().transform();
+				i.getLayer().setTranslation(i.getX(),i.getY());
+			}
 		}
 	}
 
