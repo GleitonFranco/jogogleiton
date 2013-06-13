@@ -15,7 +15,9 @@ public class Missil extends ObjTela {
 	@Override
 	public void mover() {
 		setY(getY()-VELOCIDADE);
-		if (y < Util.Y_MIN-altura) isVisible = false;
+		if (y < Util.Y_MIN) {
+			isVisible = false;
+		}
 	}
 
 	

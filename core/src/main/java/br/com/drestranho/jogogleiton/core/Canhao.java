@@ -10,11 +10,13 @@ public class Canhao extends ObjTela {
 
 	public List<Missil> misseis;
 	GroupLayer grLayer;
+	boolean ocupado;
 	
 	public Canhao(float x, float y, String iPath, GroupLayer grLayer) {
 		super(x, y, iPath, grLayer);
 		misseis = new ArrayList<Missil>();
-		this.grLayer= grLayer; 
+		this.grLayer= grLayer;
+		ocupado=false;
 	}
 	
 	@Override
@@ -25,6 +27,7 @@ public class Canhao extends ObjTela {
 	}
 	
 	public void atirar() {
+		if (misseis.size()>0) return;
 		misseis.add(new Missil(getX()+Util.LARGURA_CANHAO/2-Util.LARGURA_MISSIL/2,Util.Y_MISSIL,Util.SRC_MISSIL, grLayer));
 	}
 

@@ -17,7 +17,7 @@ public class Inimigo extends ObjTela {
 		setX(getX()-VELOCIDADE);
 		if (getX() < Util.X_MIN) {
 			setX(Util.X_MAX);
-			setY(getY()+30);
+			setY(getY()+50);
 		}
 	}
 

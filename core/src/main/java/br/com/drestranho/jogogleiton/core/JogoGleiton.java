@@ -1,6 +1,8 @@
 package br.com.drestranho.jogogleiton.core;
 
-import static playn.core.PlayN.*;
+import static playn.core.PlayN.assets;
+import static playn.core.PlayN.graphics;
+import static playn.core.PlayN.pointer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,6 @@ import playn.core.Image;
 import playn.core.ImageLayer;
 import playn.core.Pointer;
 import playn.core.Sound;
-import pythagoras.f.Rectangle;
 
 public class JogoGleiton extends Game.Default {
 	static final float GRAVITY = 64;
@@ -26,14 +27,13 @@ public class JogoGleiton extends Game.Default {
 	List<Canhao> canhoes; 
 	GroupLayer jogoLayer;
 	GroupLayer splashLayer;
+	GroupLayer vitoriaLayer;
+	GroupLayer derrotaLayer;
 	Pointer.Adapter pointer;
 	Sound tiro;
 
-	float px, py;
-	float x, y;
-	float vx, vy;
-	float ax, ay;
 	int fase=0;
+	int inimigosAtual=1;
 
 	public JogoGleiton() {
 		super(33); // call update every 33ms (30 times per second)
@@ -47,10 +47,19 @@ public class JogoGleiton extends Game.Default {
 		ImageLayer bgSplashLayer = graphics().createImageLayer(bgSplashImage);
 		splashLayer.add(bgSplashLayer);
 		
+		vitoriaLayer = graphics().createGroupLayer();
+		Image bgVitoriaImage = assets().getImage(Util.SRC_VITORIA);
+		ImageLayer bgVitoriaLayer = graphics().createImageLayer(bgVitoriaImage);
+		vitoriaLayer.add(bgVitoriaLayer);
+		
+		derrotaLayer = graphics().createGroupLayer();
+		Image bgderrotaImage = assets().getImage(Util.SRC_DERROTA);
+		ImageLayer bgderrotaLayer = graphics().createImageLayer(bgderrotaImage);
+		derrotaLayer.add(bgderrotaLayer);
+		
 		jogoLayer = graphics().createGroupLayer();
 		Image bgImage = assets().getImage(Util.SRC_FUNDO);
 		ImageLayer bgLayer = graphics().createImageLayer(bgImage);
-//		bgLayer.setScale(Util.Y_MAX, Util.X_MAX);
 		jogoLayer.add(bgLayer);
 		
 		Image soloImage = assets().getImage("images/solo.png");
@@ -61,10 +70,7 @@ public class JogoGleiton extends Game.Default {
 			soloLayer.setTranslation(i,Util.Y_MAX);
 		}
 
-		x = graphics().width() / 2;
-		y = graphics().height() / 2;
-		ax = GRAVITY;
-		
+	
 		initPontos();
 		
 		tiro = assets().getSound("images/tiro");
@@ -95,6 +101,10 @@ public class JogoGleiton extends Game.Default {
 			}
 		});
 
+		graphics().rootLayer().add(splashLayer);
+		graphics().rootLayer().add(jogoLayer);
+		graphics().rootLayer().add(vitoriaLayer);
+		graphics().rootLayer().add(derrotaLayer);
 	}
 	
 	void initPontos() {
@@ -112,23 +122,19 @@ public class JogoGleiton extends Game.Default {
 	@Override
 	public void update(int delta) {
 		// Save previous position for interpolation.
-		px = x;
-		py = y;
-		
 		checarColisoes();
-
+		if (inimigosAtual<Util.ETS_MAX)
 		if (inimigos.size()>0) if (inimigos.get(inimigos.size()-1).getX()==Util.X_MAX-70) {
 			adicionaInimigo();
-		}
-
+			inimigosAtual++;
+		} 
 		for (Canhao c : canhoes) {
 			c.mover();
 		}
-
 		for (Inimigo i : inimigos) {
 			i.mover();
+			if (i.getY()>Util.Y_CANHAO) fase=2;
 		}
-
 	}
 	
 	public void checarColisoes() {
@@ -139,10 +145,8 @@ public class JogoGleiton extends Game.Default {
 						i.isVisible=false;
 						m.isVisible=false;
 						pontos++;
+						if(pontos==Util.ETS_MAX) fase=3;
 					}
-				}
-				if (m.getY()<=0) {
-					m.isVisible=false;
 				}
 			}
 		}
@@ -153,10 +157,11 @@ public class JogoGleiton extends Game.Default {
 			}
 		}
 		for (Canhao c : canhoes) {
-			for (int i=0;i<c.getMisseis().size()-1;i++) {
+			int i=-1;
+			while(++i<c.getMisseis().size()) {
 				if (!c.getMisseis().get(i).isVisible) {
 					jogoLayer.remove(c.getMisseis().get(i).getLayer());
-					c.getMisseis().remove(i);
+					c.getMisseis().remove(c.getMisseis().get(i));
 				}
 			}
 		}
@@ -165,26 +170,25 @@ public class JogoGleiton extends Game.Default {
 
 	@Override
 	public void paint(float alpha) {
-		// the background automatically paints itself, so no need to do anything here!
-		// Interpolate current position.
-		//	    float x = (this.x * alpha) + (px * (1f - alpha));
-		//	    float y = (this.y * alpha) + (py * (1f - alpha));
-		graphics().rootLayer().add(splashLayer);
-		graphics().rootLayer().add(jogoLayer);
+		// Torna a camada visivel conforme a fase
 		if (fase==0) {
 			splashLayer.setVisible(true);
 			jogoLayer.setVisible(false);
+			derrotaLayer.setVisible(false);
+			vitoriaLayer.setVisible(false);
 		} else if (fase==1) {
 			splashLayer.setVisible(false);
 			jogoLayer.setVisible(true);
-			// Pontuacao
+			derrotaLayer.setVisible(false);
+			vitoriaLayer.setVisible(false);
+
+			// Exibe Pontuacao
 			String s = Integer.toString(pontos);
 			pontosImagem.canvas().clear();
 			pontosImagem.canvas().setFillColor(0xff00ffff);
 			pontosImagem.canvas().drawText(s, 10f, 20f);
 			
-			// Update the layer.
-	
+			// Atualiza layer para todos os elementos moveis
 			for (Canhao c : canhoes) {
 				c.getLayer().transform();
 				c.getLayer().setTranslation(c.getX(),c.getY());
@@ -193,11 +197,20 @@ public class JogoGleiton extends Game.Default {
 					m.getLayer().setTranslation(m.getX(),m.getY());					
 				}
 			}
-	
 			for (Inimigo i : inimigos) {
 				i.getLayer().transform();
 				i.getLayer().setTranslation(i.getX(),i.getY());
 			}
+		} else if (fase==2) { //Derrota
+			splashLayer.setVisible(false);
+			jogoLayer.setVisible(false);
+			derrotaLayer.setVisible(true);
+			vitoriaLayer.setVisible(false);
+		} else if (fase==3) { //Vitoria
+			splashLayer.setVisible(false);
+			jogoLayer.setVisible(false);
+			derrotaLayer.setVisible(false);
+			vitoriaLayer.setVisible(true);
 		}
 	}
 
