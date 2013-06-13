@@ -5,7 +5,6 @@ import playn.core.GroupLayer;
 public class Inimigo extends ObjTela {
 
 	public boolean isVisible;
-	public final int VELOCIDADE = 1;
 	
 	public Inimigo(float x, float y, String iPath, GroupLayer grLayer) {
 		super(x, y, iPath, grLayer);
@@ -14,10 +13,10 @@ public class Inimigo extends ObjTela {
 
 	@Override
 	public void mover() {
-		setX(getX()-VELOCIDADE);
+		setX(getX()-Util.X_AVANCO);
 		if (getX() < Util.X_MIN) {
 			setX(Util.X_MAX);
-			setY(getY()+50);
+			setY(getY()+Util.Y_AVANCO);
 		}
 	}
 

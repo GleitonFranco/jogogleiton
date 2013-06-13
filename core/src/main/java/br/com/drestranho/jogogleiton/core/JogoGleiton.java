@@ -51,11 +51,13 @@ public class JogoGleiton extends Game.Default {
 		Image bgVitoriaImage = assets().getImage(Util.SRC_VITORIA);
 		ImageLayer bgVitoriaLayer = graphics().createImageLayer(bgVitoriaImage);
 		vitoriaLayer.add(bgVitoriaLayer);
+		vitoriaLayer.setScale(1.8f);
 		
 		derrotaLayer = graphics().createGroupLayer();
 		Image bgderrotaImage = assets().getImage(Util.SRC_DERROTA);
 		ImageLayer bgderrotaLayer = graphics().createImageLayer(bgderrotaImage);
 		derrotaLayer.add(bgderrotaLayer);
+		derrotaLayer.setScale(1.5f);
 		
 		jogoLayer = graphics().createGroupLayer();
 		Image bgImage = assets().getImage(Util.SRC_FUNDO);
@@ -117,6 +119,7 @@ public class JogoGleiton extends Game.Default {
 
 	private void adicionaInimigo() {
 		inimigos.add(new Inimigo(Util.X_MAX,20f,"images/inimigo_2.gif", jogoLayer));//22x16
+//		Util.incrementaAvanco();
 	}
 
 	@Override
